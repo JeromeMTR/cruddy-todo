@@ -69,8 +69,8 @@ exports.update = (id, text, callback) => {
 
 
   // check if the file path exists using fs.exists(path, cb)
-    // if it does exists then run fs.writeFile with id and text
-    // else throw error 'file does not exist'
+  // if it does exists then run fs.writeFile with id and text
+  // else throw error 'file does not exist'
   let filePath = exports.dataDir + '/' + id + '.txt';
   fs.exists(filePath, (exist) => {
     if (exist) {
@@ -90,14 +90,20 @@ exports.update = (id, text, callback) => {
 };
 
 exports.delete = (id, callback) => {
-  var item = items[id];
-  delete items[id];
-  if (!item) {
-    // report an error if item not found
-    callback(new Error(`No item with id: ${id}`));
-  } else {
-    callback();
-  }
+  // var item = items[id];
+  // delete items[id];
+  // if (!item) {
+  //   // report an error if item not found
+  //   callback(new Error(`No item with id: ${id}`));
+  // } else {
+  //   callback();
+  // }
+
+  // call fs.rm with the specified pathname and callback function to call the callback parameter
+  let filePath = exports.dataDir + '/' + id + '.txt';
+  fs.rm(filePath, (err) => {
+    callback(err);
+  });
 };
 
 // Config+Initialization code -- DO NOT MODIFY /////////////////////////////////
