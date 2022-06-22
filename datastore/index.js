@@ -68,6 +68,24 @@ exports.update = (id, text, callback) => {
   // }
 
 
+  // check if the file path exists using fs.exists(path, cb)
+    // if it does exists then run fs.writeFile with id and text
+    // else throw error 'file does not exist'
+  let filePath = exports.dataDir + '/' + id + '.txt';
+  fs.exists(filePath, (exist) => {
+    if (exist) {
+      fs.writeFile(filePath, text, (err) => {
+        if (err) {
+          callback(err, {});
+        } else {
+          callback(null, { id: id, text: text });
+        }
+      });
+    } else {
+      callback(exist);
+    }
+  });
+
 
 };
 
