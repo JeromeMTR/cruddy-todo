@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const sprintf = require('sprintf-js').sprintf;
 
-var counter = 0;
+// var counter = 0;
 
 // Private helper functions ////////////////////////////////////////////////////
 
@@ -26,6 +26,7 @@ const readCounter = (callback) => {
 };
 
 const writeCounter = (count, callback) => {
+  console.log('outer counter:', count);
   var counterString = zeroPaddedNumber(count);
   fs.writeFile(exports.counterFile, counterString, (err) => {
     if (err) {
@@ -38,11 +39,31 @@ const writeCounter = (count, callback) => {
 
 // Public API - Fix this function //////////////////////////////////////////////
 
-exports.getNextUniqueId = () => {
-  counter = counter + 1;
-  return zeroPaddedNumber(counter);
-};
+exports.getNextUniqueId = (callback) => {
 
+  readCounter((err, counter) => {
+    writeCounter(counter + 1, (err, counterString) => {
+      callback(null, counterString);
+    });
+  });
+  // readCounter that is saved in the external file
+  // increment the counter received from the external file
+  // writeCounter to update the counter variable in the external file
+  // let currentCounter;
+  // readCounter((data1, data2) => {
+  //   if (typeof data2 !== 'number') {
+  //     currentCounter = 0;
+  //   } else {
+  //     currentCounter = data2;
+  //   }
+  // });
+
+  // currentCounter++;
+  // writeCounter(currentCounter, (data1, data2) => {
+  //   currentCounter = data2;
+  // });
+  // return zeroPaddedNumber(currentCounter);
+};
 
 
 // Configuration -- DO NOT MODIFY //////////////////////////////////////////////
