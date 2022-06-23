@@ -2,8 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const _ = require('underscore');
 const counter = require('./counter');
-
-var items = {};
+const Promise = require('bluebird');
+const readFileAsync = Promise.promisify(fs.readFile);
 
 // Public API - Fix these CRUD functions ///////////////////////////////////////
 
@@ -28,15 +28,34 @@ exports.readAll = (callback) => {
 
   fs.readdir(exports.dataDir, (err, files) => {
     if (err) {
-      throw ('error reading all files');
+      callback(err, []);
     } else {
-      if (files.length <= 0) {
-        callback(null, []);
-      } else {
-        let todoArray = _.map(files, (file) => ({id: file.slice(0, 5), text: file.slice(0, 5)}));
-        callback(null, todoArray);
-      }
+      let todoArray = _.map(files, (file) => {
+      //   {id: file.slice(0, 5), text: file.slice(0, 5)}));
+      // callback(null, todoArray)
+
+      // files = ['00001.txt', '00002.txt'];
+        var filePath = exports.dataDir + '/' + file;
+        return readFileAsync(filePath).then((fileContent) => {
+          return {
+            id: file.slice(0, 5),
+            text: fileContent.toString()
+          };
+        });
+      });
+      Promise.all(todoArray).then(items => callback(null, items), err => callback(err)).catch(console.log('error'));
+
+      // Promise.all(todoArray).then(items => { return items; }, err => callback(err)).then(items => callback(null, items), err => callback(err));
     }
+
+      // todoArray = [Promise1 , Promise2] =>
+      //newArrayOfObjects = [{ id: '00001', text: todo1text }, { id: '00002', text: todo2text }]
+    // let newArrayOfObjects = [];
+    // for (let i = 0; i < todoArray.length; i++) {
+    //   todoArray[i].then(item => { newArrayOfObjects.push(item); });
+    // }
+    // return newArrayOfObjects;
+    // [promiseObj1, promiseObj2].then([{ id: '00001', text: todo1text }, { id: '00002', text: todo2text }] => callback(null, ...))
   });
 };
 

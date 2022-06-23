@@ -40,29 +40,14 @@ const writeCounter = (count, callback) => {
 // Public API - Fix this function //////////////////////////////////////////////
 
 exports.getNextUniqueId = (callback) => {
-
+  // invoke read counter
+    // then invoke write counter inside read counter
+      // then invoke callback func inside write counter
   readCounter((err, counter) => {
     writeCounter(counter + 1, (err, counterString) => {
       callback(null, counterString);
     });
   });
-  // readCounter that is saved in the external file
-  // increment the counter received from the external file
-  // writeCounter to update the counter variable in the external file
-  // let currentCounter;
-  // readCounter((data1, data2) => {
-  //   if (typeof data2 !== 'number') {
-  //     currentCounter = 0;
-  //   } else {
-  //     currentCounter = data2;
-  //   }
-  // });
-
-  // currentCounter++;
-  // writeCounter(currentCounter, (data1, data2) => {
-  //   currentCounter = data2;
-  // });
-  // return zeroPaddedNumber(currentCounter);
 };
 
 
